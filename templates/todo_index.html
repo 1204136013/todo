@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TODO 程序</title>
+</head>
+<body>
+    <h1>TODO</h1>
+
+    <form action="{% url 'todo_add' %}" method="post">
+        {# 每个表单都要 csrf 验证 #}
+         {% csrf_token %} 
+        <input type="text" name="title" placeholder="请输入todo">
+        <br>
+        <button type="submit">添加</button>
+    </form>
+    {% for todo in todos %}
+        <h3>
+            {{ todo.id }} : {{ todo.title }}
+            {# 类似 flask url_for #}
+            <a href="{% url 'todo_edit' todo.id %}">编辑</a>
+            <a href="{% url 'todo_delete' todo.id%}">删除</a>
+        </h3>
+    {% endfor %}
+
+</body>
+</html>

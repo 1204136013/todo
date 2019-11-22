@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TODO 程序</title>
+    {# 这一个是必须要的，不然用不了 static 标签 #}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+</head>
+<body>
+<section class="todoapp">
+    <header class="header">
+        <h1>TODO</h1>
+        <form action="{% url 'todo_add' %}" method="post">
+            {# 每个 post 表单都要 csrf 验证 #}
+            {% csrf_token %}
+            <label for="new-todo"></label>
+            <input id="new-todo" class="new-todo" name="title" placeholder="请输入todo" autofocus>
+        </form>
+    </header>
+    <section class="main">
+        <form action="{% url 'todo_all_complete' %}" method="get">
+            <button>
+                <input id="toggle-all" class="toggle-all" type="checkbox">
+                <label for="toggle-all">点击完成所有 todo</label>
+            </button>
+        </form>
+        <ul class="todo-list">
+            {% for todo in todos %}
+                <li class="{% if todo.completed %}completed{% endif %}">
+                    <div class="view">
+                        <form class="toggle {% if todo.completed %}checked{% endif %}" action="{% url 'todo_complete' todo.id %}" method="get">
+                            <button></button>
+                        </form>
+                        <form class="title" action="{% url 'todo_update' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="id" value="{{ todo.id }}">
+                            <input type="text" name="title" value="{{ todo.title }}">
+                        </form>
+                        <form action="{% url 'todo_delete' todo.id %}" method="get">
+                            <button class="destroy"></button>
+                        </form>
+                    </div>
+                </li>
+            {% endfor %}
+
+        </ul>
+    </section>
+    <footer class="footer">
+        <span class="todo-count">还有 {{ incomplete }} 任务未完成</span>
+        <ul class="filters">
+            <li>
+                <a href="{% url 'todo_index_all' %}"
+                   {% if active_index %}class="selected"{% endif %}
+                >所有</a>
+            </li>
+            <li>
+                <a href="{% url 'todo_index_incomplete' %}"
+                   {% if active_incomplete %}class="selected"{% endif %}
+                >未完成</a>
+            </li>
+            <li>
+                <a href="{% url 'todo_index_completed' %}"
+                   {% if active_complete %}class="selected"{% endif %}
+                >已完成</a>
+            </li>
+        </ul>
+        <form action="{% url 'todo_all_not_complete' %}" method="get">
+            <button class="clear-completed">清除已完成任务</button>
+        </form>
+    </footer>
+</section>
+
+<footer class="info">
+    <p>在最上方输入 todo</p>
+    <p>点击向下箭头完成所有 todo</p>
+    <p>点击编辑 todo</p>
+    <p>悬浮在 todo 上并点击 x 删除 todo</p>
+    <p>xxxx 为您呈现</p>
+</footer>
+</body>
+</html>
+
